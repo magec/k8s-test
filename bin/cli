@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+make -s -f "${DIR}/../docker/cli/Makefile"
+set -e
+
+# Some sanity check
+[ -z "${AWS_ACCESS_KEY_ID}${AWS_SECRET_ACCESS_KEY}" ] && echo 'Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY' && exit 1
+
+export HOST_USER="$(id -u)"
+export HOST_GROUP="$(id -g)"
+export HOST_HOME=$HOME
+export HOST_PWD=$PWD
+
+docker run \
+       --hostname cli \
+       -ti \
+       --user 'root' \
+       --volume "${DIR}/..:/opt/k8s-test/" \
+       --volume "/:/host_root" \
+       --volume "${HOST_HOME}:/host_home" \
+       --entrypoint /opt/k8s-test/bin/cli_wrapper \
+       --detach-keys="ctrl-h,ctrl-q" \
+       ${DOCKER_EXTRA_OPTS} \
+       -e HOST_USER \
+       -e HOST_GROUP \
+       -e HOST_HOME \
+       -e HOST_PWD \
+       -e AWS_ACCESS_KEY_ID \
+       -e AWS_SECRET_ACCESS_KEY \
+       --rm magec/cli-base:latest "$@"

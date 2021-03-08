@@ -1,0 +1,4 @@
+class containerd::config(
+){
+
+}

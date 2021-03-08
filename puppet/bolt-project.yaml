@@ -1,0 +1,9 @@
+---
+name: k8stest
+modulepath: vendor-modules:modules:roles
+apply-settings:
+  show_diff: true
+log:
+  bolt-debug.log: disable
+  console:
+    level: warn

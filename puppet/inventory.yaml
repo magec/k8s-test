@@ -1,0 +1,44 @@
+groups:
+  - name: controllers
+    targets:
+      - _plugin: aws_inventory
+        profile: k8stest
+        region: eu-central-1
+        filters:
+          - name: tag:Role
+            values: [Controller]
+        target_mapping:
+          name: tags.Name
+          uri: public_dns_name
+          config:
+            ssh:
+              host: public_dns_name
+
+    config:
+      ssh:
+        user: ubuntu
+        private-key: /opt/k8s-test/secrets/id_rsa
+        host-key-check: false
+        run-as: root
+        run-as-command: ['sudo', '-E', '-u']
+  - name: workers
+    targets:
+      - _plugin: aws_inventory
+        profile: k8stest
+        region: eu-central-1
+        filters:
+          - name: tag:Role
+            values: [Worker]
+        target_mapping:
+          name: tags.Name
+          uri: public_ip_address
+          config:
+            ssh:
+              host: public_dns_name
+    config:
+      ssh:
+        user: ubuntu
+        private-key: /opt/k8s-test/secrets/id_rsa
+        host-key-check: false
+        run-as: root
+        run-as-command: ['sudo', '-E', '-u']

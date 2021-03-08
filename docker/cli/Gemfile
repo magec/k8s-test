@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+source 'https://rubygems.org'
+
+# PUPPET/BOLT
+gem 'puppet', '7.1.0'
+gem 'bolt', '2.40.2'
+gem 'hiera-eyaml'
+
+# CLI
+gem 'dry-cli', '=0.6'
+gem 'rainbow', '~> 3.0.0'
