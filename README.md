@@ -16,3 +16,6 @@ AWS_SECRET_ACCESS_KEY=SECRET AWS_ACCESS_KEY_ID=NO_SECRET ./bin/cli example
 ```
 
 This is just a way of testing stuff NO WARRANTY OF ANY KIND. The script is idempotent.
+
+An example
+![](docs/execution.gif)

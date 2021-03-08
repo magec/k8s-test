@@ -46,13 +46,6 @@ module K8sTest
               not_if: Proc.new { File.exists?(SECRETS_DIR + '/ca.pem') },
               message: '(PKI) Generating CA',
             )
-            %w[admin kube-proxy kube-controller-manager kube-scheduler].each do |cert|
-              K8sTest::Utils.execute_command(
-                command: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=#{PKI_DIR}/ca-config.json -profile=kubernetes #{PKI_DIR}/#{cert}-csr.json | cfssljson -bare #{cert} && rm #{cert}.csr",
-                not_if: Proc.new { File.exists?(SECRETS_DIR + "/#{cert}.pem") },
-                message: "(PKI) Generating #{cert} client cert",
-              )
-            end
             K8sTest::Utils.execute_command(
               command: "head -c 32 /dev/urandom | base64 -w0 > encryption.key",
               not_if: Proc.new { File.exists?(SECRETS_DIR + '/encryption.key') },
@@ -60,6 +53,11 @@ module K8sTest
             )
           end
           Dir.chdir(PUPPET_DIR) do
+            K8sTest::Utils.execute_command(
+              command: "bolt puppetfile install",
+              message: 'Downloading external modules of puppet into `puppet/vendor-modules`',
+              not_if: Proc.new { Dir.exists?(PUPPET_DIR + '/vendor-modules/facts') },
+            )
             K8sTest::Utils.execute_command(
               command: "bolt plan run bootstrap::set_hostname --targets all",
               message: 'Setting up Hostnames',
