@@ -1,12 +1,26 @@
+# Emacs, your editor of choice
 *~
 \#*
+
+# Secret stuff is locally generated
 secrets/*
 !secrets/.keepme
 logs/*
 !logs/.keepme
+
+# Terraform
 .terraform
 terraform.tfstate.backup
+# we also ignore terraform state, because of the (toy) nature of the project
+terraform.tfstate
+
+# Every directory that contains secret is ignored
+# but you never know
 *.pem
 
+# Puppet
 puppet/vendor-modules/*
 !puppet/vendor-modules/.keepme
+puppet/bolt-debug.log
+puppet/.rerun.json
+puppet/.resource_types

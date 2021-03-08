@@ -3,6 +3,8 @@ An implementation using terraform and puppet of a kubernetes cluster using https
 
 STILL UNDER DEVELOMENT, there are a couple of things that need to be changed, for example balancer ip is hardcoded (among other things).
 
+Also, the worker nodes are not working yet
+
 ## Installation
 You just have to have docker installed (also make).
 
