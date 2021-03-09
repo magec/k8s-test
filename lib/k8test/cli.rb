@@ -39,6 +39,10 @@ module K8sTest
               not_if: Proc.new { K8sTest::Utils.system('terraform plan -detailed-exitcode') },
               message: 'Creating Cloud Infrastructure',
             )
+            # K8sTest::Utils.execute_command(
+            #   command: "aws elb describe-load-balancers --load-balancer-names api |jq '.LoadBalancerDescriptions[0].DNSName",
+            #   message: 'Obtaining information about the network',
+            # )
           end
           Dir.chdir(SECRETS_DIR) do
             K8sTest::Utils.execute_command(
@@ -59,8 +63,8 @@ module K8sTest
               not_if: Proc.new { Dir.exists?(PUPPET_DIR + '/vendor-modules/facts') },
             )
             K8sTest::Utils.execute_command(
-              command: "bolt plan run bootstrap::set_hostname --targets all",
-              message: 'Setting up Hostnames',
+              command: "bolt plan run bootstrap::wait_for_update --targets all",
+              message: 'Waiting for the servers to be ready',
             )
             K8sTest::Utils.execute_command(
               command: "bolt apply manifests/controller.pp --targets controllers",
@@ -71,11 +75,16 @@ module K8sTest
               message: 'Setting up Workers',
             )
           end
+          K8sTest::Utils.execute_command(
+              command: "",
+              message: 'Creating admin credentials',
+            )
+
         end
       end
 
       register 'terminal', Terminal
-      register 'example', Example
+      register 'example',  Example
     end
   end
 end
