@@ -3,6 +3,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 make -s -f "${DIR}/../docker/cli/Makefile"
 set -e
 
+AWS_DEFAULT_REGION=${VERY_LONG_VARIABLE_NAME:-eu-central-1}
 # Some sanity check
 [ -z "${AWS_ACCESS_KEY_ID}${AWS_SECRET_ACCESS_KEY}" ] && echo 'Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY' && exit 1
 
@@ -27,4 +28,5 @@ docker run \
        -e HOST_PWD \
        -e AWS_ACCESS_KEY_ID \
        -e AWS_SECRET_ACCESS_KEY \
+       -e AWS_DEFAULT_REGION \
        --rm magec/cli-base:latest "$@"
