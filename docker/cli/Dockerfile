@@ -1,6 +1,6 @@
 FROM ubuntu:20.04 AS cli-base
 ARG user=ubuntu
-ARG extra_packages='ssh curl wget ruby sudo unzip locales gcc libffi-dev libxml2-dev ruby-dev awscli make'
+ARG extra_packages='ssh curl wget ruby sudo unzip locales gcc libffi-dev libxml2-dev ruby-dev awscli make jq'
 
 # Common tools
 RUN apt-get update \
