@@ -2,6 +2,10 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+locals {
+  workers_nodes = 3
+}
+
 # VPC
 resource "aws_vpc" "main" {
   cidr_block           = "10.240.0.0/16"
@@ -27,6 +31,13 @@ resource "aws_route_table" "default_public_route" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.default_gw.id
   }
+}
+
+resource "aws_route" "r" {
+  count = local.workers_nodes
+  route_table_id         = aws_route_table.default_public_route.id
+  destination_cidr_block = "10.200.${count.index}.0/24"
+  instance_id            = aws_instance.workers[count.index].id
 }
 
 resource "aws_subnet" "public" {
