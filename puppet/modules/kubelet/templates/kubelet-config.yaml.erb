@@ -12,7 +12,7 @@ authorization:
 clusterDomain: "cluster.local"
 clusterDNS:
   - "10.32.0.10"
-podCIDR: "<%= @facts['ec2_metadata']['subnet-ipv4-cidr-block'] %>"
+podCIDR: "<%= @pod_cidr %>"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "/var/lib/kubernetes/kubelet.pem"

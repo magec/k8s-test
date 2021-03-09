@@ -8,7 +8,7 @@
     "ipam": {
         "type": "host-local",
         "ranges": [
-          [{"subnet": "<%= @facts['ec2_metadata']['subnet-ipv4-cidr-block'] %>"}]
+          [{"subnet": "<%= @pod_cidr %>"}]
         ],
         "routes": [{"dst": "0.0.0.0/0"}]
     }
