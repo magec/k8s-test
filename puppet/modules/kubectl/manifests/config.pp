@@ -6,11 +6,12 @@ define kubectl::config(
   require kube_common
   require kubectl
 
-  $exec_command = $commands.map |$command| {
+  $config_command = $commands.map |$command| {
     "/usr/bin/kubectl config ${command} --kubeconfig=${config_file}"
   }
 
-  exec { ["/usr/bin/rm -f ${config_file}"] + $exec_command:
+  $exec_command = (["/usr/bin/rm -f ${config_file}"] + $config_command).join(' && ')
+  exec { $exec_command:
     creates => $config_file,
   }
 
