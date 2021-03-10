@@ -2,8 +2,11 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-locals {
-  workers_nodes = 3
+variable "worker_nodes" {
+  default = 3
+}
+variable "controller_nodes" {
+  default = 3
 }
 
 # VPC
@@ -34,7 +37,7 @@ resource "aws_route_table" "default_public_route" {
 }
 
 resource "aws_route" "r" {
-  count = local.workers_nodes
+  count = var.worker_nodes
   route_table_id         = aws_route_table.default_public_route.id
   destination_cidr_block = "10.200.${count.index}.0/24"
   instance_id            = aws_instance.workers[count.index].id
@@ -158,7 +161,7 @@ resource "aws_key_pair" "ssh_key" {
 
 ## EC2 Instances
 resource "aws_instance" "controllers" {
-  count                       = 3
+  count                       = var.controller_nodes
   key_name                    = aws_key_pair.ssh_key.key_name
   instance_type               = "t3.2xlarge"
   subnet_id                   = aws_subnet.public.id
@@ -166,7 +169,6 @@ resource "aws_instance" "controllers" {
 
   ebs_optimized = true
   monitoring = true
-  private_ip = "10.240.0.1${count.index}"
 
   vpc_security_group_ids = [aws_security_group.cluster.id]
   ami                    = "ami-0767046d1677be5a0"
@@ -184,7 +186,7 @@ resource "aws_instance" "controllers" {
 }
 
 resource "aws_instance" "workers" {
-  count                       = 3
+  count                       = var.worker_nodes
   key_name                    = aws_key_pair.ssh_key.key_name
   instance_type               = "t3.2xlarge"
   subnet_id                   = aws_subnet.public.id
@@ -192,7 +194,6 @@ resource "aws_instance" "workers" {
 
   ebs_optimized = true
   monitoring = true
-  private_ip = "10.240.0.2${count.index}"
 
   vpc_security_group_ids = [aws_security_group.cluster.id]
   ami                    = "ami-0767046d1677be5a0"

@@ -24,3 +24,4 @@ puppet/vendor-modules/*
 puppet/bolt-debug.log
 puppet/.rerun.json
 puppet/.resource_types
+puppet/modules/k8stest_stdlib/facts.d/network_info.yaml

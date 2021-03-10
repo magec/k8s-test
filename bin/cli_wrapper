@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-export TERM=xterm-265colors
 # This is so we run the CLI as the same user:group
 # of the host, this way we ensure the ownership of files
 # from inside the container in the mounted volume.

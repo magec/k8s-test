@@ -5,3 +5,5 @@ STDOUT_FILE=File.expand_path(File.join(PROJECT_DIR, 'logs', 'stdout.log')).freez
 STDERR_FILE=File.expand_path(File.join(PROJECT_DIR, 'logs', 'stderr.log')).freeze
 PKI_DIR=File.expand_path(File.join(PROJECT_DIR, 'pki')).freeze
 PUPPET_DIR=File.expand_path(File.join(PROJECT_DIR, 'puppet')).freeze
+NETWORK_INFO_FILE="#{PUPPET_DIR}/modules/k8stest_stdlib/facts.d/network_info.yaml"
+ADMIN_CREDS_TEMPLATE=File.expand_path(File.join(PROJECT_DIR, 'lib/k8test/gen_admin_cert.sh.erb'))

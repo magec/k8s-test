@@ -1,0 +1,17 @@
+{
+  KUBERNETES_PUBLIC_ADDRESS=<%= public_address %>
+  kubectl config set-cluster magec \
+    --certificate-authority=secrets/ca.pem \
+    --embed-certs=true \
+    --server=https://<%= public_address %>:6443
+
+  kubectl config set-credentials admin \
+    --client-certificate=secrets/admin.pem \
+    --client-key=secrets/admin-key.pem
+
+  kubectl config set-context magec \
+    --cluster=magec \
+    --user=admin
+
+  kubectl config use-context magec
+}

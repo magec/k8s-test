@@ -3,7 +3,7 @@ class kube_common {
   $conf_dir = '/var/lib/kubernetes'
   $yaml_dir = "${conf_dir}/yaml"
   $cluster_name = 'magec'
-  $public_address = "18.185.216.152"
+  $public_address = $network_info['balancer_dns_name']
 
   file { [$conf_dir, $yaml_dir]:
     ensure => 'directory',
@@ -13,11 +13,11 @@ class kube_common {
   }
 
   $kubernetes_hostnames="kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local".split(',')
+  $private_ip_addresses = $network_info['controllers'].map |$dns_name, $info| { $info['private_ip'] }
+
   $hostnames = [
-    "10.32.0.1",
-    "10.240.0.10",
-    "10.240.0.11",
-    "10.240.0.12",
+    $network_info['service_cluster_first_ip'],
+    $private_ip_addresses,
     $public_address,
     "127.0.0.1",
     $kubernetes_hostnames,

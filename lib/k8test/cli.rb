@@ -6,6 +6,8 @@ require_relative 'result'
 require_relative 'utils'
 require_relative 'constants'
 require 'open3'
+require 'erb'
+require 'yaml'
 
 module K8sTest
   module CLI
@@ -24,9 +26,11 @@ module K8sTest
         end
       end
 
-      class Example < Dry::CLI::Command
-        desc 'Runs the example'
-        def call(**)
+      class Setup < Dry::CLI::Command
+        desc 'Sets up the cluster'
+        option :controllers, default: '3', desc: 'The number of controllers'
+        option :workers, default: '3', desc: 'The number of workers'
+        def call(**options)
           K8sTest::AuthManager.setup_auth!
           Dir.chdir(TERRAFORM_DIR) do
             K8sTest::Utils.execute_command(
@@ -35,14 +39,14 @@ module K8sTest
               message: 'Initializing terraform',
             )
             K8sTest::Utils.execute_command(
-              command: "terraform apply -auto-approve",
-              not_if: Proc.new { K8sTest::Utils.system('terraform plan -detailed-exitcode') },
+              command: "terraform apply -auto-approve #{tf_vars(options)}",
+              not_if: Proc.new { K8sTest::Utils.system("terraform plan -detailed-exitcode #{tf_vars(options)}") },
               message: 'Creating Cloud Infrastructure',
             )
-            # K8sTest::Utils.execute_command(
-            #   command: "aws elb describe-load-balancers --load-balancer-names api |jq '.LoadBalancerDescriptions[0].DNSName",
-            #   message: 'Obtaining information about the network',
-            # )
+            K8sTest::Utils.execute_command(
+              command: "/usr/bin/ruby #{File.expand_path(File.join(__dir__, 'fetch_server_info.rb'))} > #{NETWORK_INFO_FILE}",
+              message: 'Obtaining system information',
+            )
           end
           Dir.chdir(SECRETS_DIR) do
             K8sTest::Utils.execute_command(
@@ -75,18 +79,32 @@ module K8sTest
               message: 'Setting up Workers',
             )
           end
-          K8sTest::Utils.execute_command(
-              command: "",
-              message: 'Creating admin credentials',
+          renderer = ERB.new(File.read(ADMIN_CREDS_TEMPLATE))
+          admin_creds = renderer.result
+          Dir.chdir(PROJECT_DIR) do
+            `#{admin_creds}`
+            K8sTest::Utils.execute_command(
+              command: "kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.7.0.yaml",
+              message: 'Setting up coreDNS',
             )
-
+          end
+          MessageHelper.done('Finished!, copy/paste this to connect get admin credentials 👇 ')
+          puts admin_creds
         end
       end
 
       register 'terminal', Terminal
-      register 'example',  Example
+      register 'setup',  Setup
     end
   end
+end
+
+def tf_vars(options)
+  "-var \"worker_nodes=#{options[:workers]}\" -var \"controller_nodes=#{options[:controllers]}\""
+end
+
+def public_address
+  YAML.load(File.read(NETWORK_INFO_FILE))['network_info']['balancer_dns_name']
 end
 
 Dry::CLI.new(K8sTest::CLI::Commands).call

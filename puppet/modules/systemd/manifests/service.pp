@@ -8,9 +8,7 @@ define systemd::service(
 
   systemd::file { "/lib/systemd/system/${service_name}.service":
     content => $content,
-  }
-
-  service { $service_name:
+  } ~> service { $service_name:
     provider => 'systemd',
     ensure   => $ensure,
     enable   => $enable,
