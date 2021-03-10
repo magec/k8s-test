@@ -205,6 +205,7 @@ resource "aws_instance" "workers" {
 
   tags = {
     Name = "worker-${count.index}"
+    PODCIDR = "10.200.${count.index}.0/24"
     Role = "Worker"
   }
 }

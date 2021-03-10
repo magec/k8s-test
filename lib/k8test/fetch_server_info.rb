@@ -19,9 +19,10 @@ aws_load_balancing_client = Aws::ElasticLoadBalancing::Client.new
 balancer_name = aws_load_balancing_client.describe_load_balancers.first['load_balancer_descriptions'].first.dns_name
 def info(host)
   [
-    host.private_dns_name, {
-      'private_ip' => host.private_ip_address,
+    host.private_dns_name.split('.').first, {
+      'private_ip'  => host.private_ip_address,
       'private_dns' => host.private_dns_name,
+      'tags'        => host.tags.map { |i| [i[:key], i[:value]] }.to_h
     }
   ]
 end
