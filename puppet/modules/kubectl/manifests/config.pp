@@ -12,7 +12,7 @@ define kubectl::config(
 
   $exec_command = (["/usr/bin/rm -f ${config_file}"] + $config_command).join(' && ')
   exec { $exec_command:
-#    creates => $config_file,
+    creates => $config_file,
   }
 
 }

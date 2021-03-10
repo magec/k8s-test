@@ -11,7 +11,8 @@ class kubelet::config(
   cert { 'kubelet':
     cn        => "system:node:${hostname}",
     path      => $kube_common::conf_dir,
-    hostnames => [],
+    hostnames => [$hostname, $ipaddress],
+    replace => true,
   } -> kubectl::config { "${kube_common::conf_dir}/kubelet.kubeconfig":
     commands => [
       "set-cluster ${kube_common::cluster_name} --certificate-authority=${kube_common::conf_dir}/ca.pem --embed-certs=true --server=https://${kube_common::public_address}:6443",
