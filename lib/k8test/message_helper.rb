@@ -2,16 +2,16 @@ require 'rainbow/refinement'
 using Rainbow
 class MessageHelper
 
-  CLEAR_LINE = "\e[0E"
-  OK_EMOJI = '💃'.freeze
-  DO_EMOJI = '⚙️'.freeze
-  DONE_EMOJI = '✔️'.freeze
+  CLEAR_LINE = "\r\e[2K"
+  OK_EMOJI = "💃".freeze
+  DO_EMOJI = "⚙️".freeze
+  DONE_EMOJI = "✔️" .freeze
   PROGRESS_EMOJIS = '🙈🙉🙊'.freeze
 
   ERROR_EMOJI = '😱'.freeze
   WARNING_EMOJI = '⚠️ '.freeze
   PROGRESS_MESSAGE_EMOJI = '🔧'.freeze
-  TAB = '      '.freeze
+  TAB = '  '.freeze
 
   # Helper method for message output
   def self.say_with_prefix(prefix, message, color = nil)
@@ -20,6 +20,14 @@ class MessageHelper
     end
   rescue Encoding::CompatibilityError
     puts '?'
+  end
+
+  def self.hide_cursor
+    print("\u001B[?25l")
+  end
+
+  def self.show_cursor
+    print("\u001B[?25h")
   end
 
   # Helper method for message output
@@ -37,22 +45,22 @@ class MessageHelper
 
   def self.do_or_done(message:, &block)
     print CLEAR_LINE + DO_EMOJI + TAB + message.black.bright
-    result = progress { yield }
+    result = progress(TAB + message.black.bright) { yield }
 
     done(message) if result.already_done?
     error(message) if result.error?
     ok(message) if result.ok?
   end
 
-  def self.progress_message
+  def self.progress_message(message)
     @progress_index ||= 0
-    print CLEAR_LINE + PROGRESS_EMOJIS[(@progress_index += 1) % 3]
+    print CLEAR_LINE + PROGRESS_EMOJIS[(@progress_index += 1) % 3] + ' ' + message
   end
 
-  def self.progress(&block)
+  def self.progress(message, &block)
     thread = Thread.new do
       while true do
-        progress_message
+        progress_message(message)
         sleep 1
       end
     end
@@ -71,7 +79,7 @@ class MessageHelper
   end
 
   def self.done(message)
-    puts("#{CLEAR_LINE}#{DONE_EMOJI}#{TAB} " + message.green+ "\n")
+    puts("#{CLEAR_LINE}#{DONE_EMOJI}#{TAB} " + ' ' + message.green+ "\n")
   end
 
   def self.say_indented(message, color = nil)

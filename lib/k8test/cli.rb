@@ -31,6 +31,7 @@ module K8sTest
         option :controllers, default: '3', desc: 'The number of controllers'
         option :workers, default: '3', desc: 'The number of workers'
         def call(**options)
+          MessageHelper.hide_cursor
           K8sTest::AuthManager.setup_auth!
           Dir.chdir(TERRAFORM_DIR) do
             K8sTest::Utils.execute_command(
@@ -90,6 +91,8 @@ module K8sTest
           end
           MessageHelper.done('Finished!, copy/paste this to connect get admin credentials 👇 ')
           puts admin_creds
+        ensure
+          MessageHelper.show_cursor
         end
       end
 
