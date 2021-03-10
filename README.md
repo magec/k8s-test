@@ -12,7 +12,7 @@ You just have to have docker installed (also make).
 The script will create everything needed. You'll need to pass your AWS key pair with admin priviledges.
 
 ```
-AWS_SECRET_ACCESS_KEY=SECRET AWS_ACCESS_KEY_ID=NO_SECRET ./bin/cli example
+AWS_SECRET_ACCESS_KEY=SECRET AWS_ACCESS_KEY_ID=NO_SECRET ./bin/cli setup
 ```
 
 This is just a way of testing stuff NO WARRANTY OF ANY KIND. The script is idempotent.
