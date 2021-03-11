@@ -3,15 +3,15 @@ using Rainbow
 class MessageHelper
 
   CLEAR_LINE = "\r\e[2K"
-  OK_EMOJI = "💃".freeze
-  DO_EMOJI = "⚙️".freeze
-  DONE_EMOJI = "✔️" .freeze
-  PROGRESS_EMOJIS = '🙈🙉🙊'.freeze
+  OK_EMOJI = "\u{1F483}".freeze
+  DO_EMOJI = "️\u{FFE0F}".freeze
+  DONE_EMOJI = "\u{2705}".freeze
+  PROGRESS_EMOJIS = "\u{1F648}\u{1F649}\u{1F64A}".freeze
 
-  ERROR_EMOJI = '😱'.freeze
-  WARNING_EMOJI = '⚠️ '.freeze
-  PROGRESS_MESSAGE_EMOJI = '🔧'.freeze
-  TAB = '  '.freeze
+  ERROR_EMOJI = "\u{1F631}".freeze
+  WARNING_EMOJI = "\u{26A0}".freeze
+  PROGRESS_MESSAGE_EMOJI = "\u{1F527}".freeze
+  TAB = ' '.freeze
 
   # Helper method for message output
   def self.say_with_prefix(prefix, message, color = nil)
@@ -71,15 +71,15 @@ class MessageHelper
   end
 
   def self.error(message)
-    puts("#{CLEAR_LINE}#{ERROR_EMOJI}#{TAB} " + message.red + "\n")
+    puts("#{CLEAR_LINE}#{ERROR_EMOJI}#{TAB}" + message.red + "\n")
   end
 
   def self.ok(message)
-    puts("#{CLEAR_LINE}#{OK_EMOJI}#{TAB} " + message.green+ "\n")
+    puts("#{CLEAR_LINE}#{OK_EMOJI}#{TAB}" + message.green+ "\n")
   end
 
   def self.done(message)
-    puts("#{CLEAR_LINE}#{DONE_EMOJI}#{TAB} " + ' ' + message.green+ "\n")
+    puts("#{CLEAR_LINE}#{DONE_EMOJI}#{TAB}" + message.green+ "\n")
   end
 
   def self.say_indented(message, color = nil)
