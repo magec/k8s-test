@@ -1,9 +1,5 @@
-# k8s-test
-An implementation using terraform and puppet of a kubernetes cluster using https://github.com/kelseyhightower/kubernetes-the-hard-way
-
-STILL UNDER DEVELOMENT, there are a couple of things that need to be changed, for example balancer ip is hardcoded (among other things).
-
-Also, the worker nodes are not working yet
+# Kubernetes the not that hard (but kinda) way
+An implementation using terraform and puppet of a kubernetes cluster based on https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 ## Installation
 You just have to have docker installed (also make).
