@@ -30,17 +30,19 @@ resource "aws_internet_gateway" "default_gw" {
 
 resource "aws_route_table" "default_public_route" {
   vpc_id = aws_vpc.main.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.default_gw.id
-  }
 }
 
-resource "aws_route" "r" {
+resource "aws_route" "pod_routes" {
   count = var.worker_nodes
   route_table_id         = aws_route_table.default_public_route.id
   destination_cidr_block = "10.200.${count.index}.0/24"
   instance_id            = aws_instance.workers[count.index].id
+}
+
+resource "aws_route" "internet_gateway" {
+  route_table_id         = aws_route_table.default_public_route.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.default_gw.id
 }
 
 resource "aws_subnet" "public" {
@@ -163,9 +165,10 @@ resource "aws_key_pair" "ssh_key" {
 resource "aws_instance" "controllers" {
   count                       = var.controller_nodes
   key_name                    = aws_key_pair.ssh_key.key_name
-  instance_type               = "t3.2xlarge"
+  instance_type               = "t3.large"
   subnet_id                   = aws_subnet.public.id
   associate_public_ip_address = true
+  source_dest_check           = false
 
   ebs_optimized = true
   monitoring = true
@@ -188,9 +191,10 @@ resource "aws_instance" "controllers" {
 resource "aws_instance" "workers" {
   count                       = var.worker_nodes
   key_name                    = aws_key_pair.ssh_key.key_name
-  instance_type               = "t3.2xlarge"
+  instance_type               = "t3.large"
   subnet_id                   = aws_subnet.public.id
   associate_public_ip_address = true
+  source_dest_check           = false
 
   ebs_optimized = true
   monitoring = true
